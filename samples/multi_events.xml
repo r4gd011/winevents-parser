@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Three-event chain showing a lateral-movement pattern:
+    1. 4648 — jsmith uses explicit credentials (runas) to authenticate as corp-admin
+    2. 4688 — runas.exe spawns an elevated cmd.exe under corp-admin's token
+    3. 4104 — the resulting PowerShell session runs a reconnaissance script block
+-->
+<Events>
+
+  <!-- ── Event 1 of 3 ─────────────────────────────────────────────────────── -->
+  <!--
+    Event ID 4648 — A logon was attempted using explicit credentials
+    Subject (caller): jsmith — the account that invoked runas
+    Target (requested): corp-admin — the account whose credentials were supplied
+  -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing"
+                Guid="{54849625-5478-4994-A5BA-3E3B0328C30D}"/>
+      <EventID>4648</EventID>
+      <Version>0</Version>
+      <Level>0</Level>
+      <Task>12544</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8020000000000000</Keywords>
+      <TimeCreated SystemTime="2024-05-10T15:30:12.1234567Z"/>
+      <RecordID>6234501</RecordID>
+      <Correlation ActivityID="{C1D2E3F4-A5B6-7C8D-9E0F-A1B2C3D4E5F6}"/>
+      <Execution ProcessID="4" ThreadID="1108"/>
+      <Channel>Security</Channel>
+      <Computer>WKSTN-JSMITH.corp.example.com</Computer>
+      <Security/>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-5-21-3623811015-3361044348-30300820-1001</Data>
+      <Data Name="SubjectUserName">jsmith</Data>
+      <Data Name="SubjectDomainName">CORP</Data>
+      <Data Name="SubjectLogonId">0x3a1c8</Data>
+      <!-- LogonGuid can be correlated with 4624 on the target machine -->
+      <Data Name="LogonGuid">{A9B8C7D6-E5F4-3210-FEDC-BA9876543210}</Data>
+      <Data Name="TargetUserName">corp-admin</Data>
+      <Data Name="TargetDomainName">CORP</Data>
+      <Data Name="TargetLogonGuid">{00000000-0000-0000-0000-000000000000}</Data>
+      <Data Name="TargetServerName">localhost</Data>
+      <Data Name="TargetInfo">localhost</Data>
+      <!-- ProcessId / ProcessName: the process that requested the logon -->
+      <Data Name="ProcessId">0x1f2c</Data>
+      <Data Name="ProcessName">C:\Windows\System32\runas.exe</Data>
+      <Data Name="IpAddress">-</Data>
+      <Data Name="IpPort">-</Data>
+    </EventData>
+  </Event>
+
+  <!-- ── Event 2 of 3 ─────────────────────────────────────────────────────── -->
+  <!--
+    Event ID 4688 — A new process has been created
+    runas.exe (PID 0x1f2c) spawns cmd.exe under corp-admin's elevated token.
+    TokenElevationType Full (%%1937) confirms this process has admin privileges.
+  -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing"
+                Guid="{54849625-5478-4994-A5BA-3E3B0328C30D}"/>
+      <EventID>4688</EventID>
+      <Version>2</Version>
+      <Level>0</Level>
+      <Task>13312</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8020000000000000</Keywords>
+      <TimeCreated SystemTime="2024-05-10T15:30:12.5678901Z"/>
+      <RecordID>6234502</RecordID>
+      <Correlation ActivityID="{D2E3F4A5-B6C7-8D9E-0F1A-B2C3D4E5F6A7}"/>
+      <Execution ProcessID="4" ThreadID="1108"/>
+      <Channel>Security</Channel>
+      <Computer>WKSTN-JSMITH.corp.example.com</Computer>
+      <Security/>
+    </System>
+    <EventData>
+      <!-- Subject: corp-admin — the token used to create this process -->
+      <Data Name="SubjectUserSid">S-1-5-21-3623811015-3361044348-30300820-1115</Data>
+      <Data Name="SubjectUserName">corp-admin</Data>
+      <Data Name="SubjectDomainName">CORP</Data>
+      <Data Name="SubjectLogonId">0x4f8b2</Data>
+      <Data Name="NewProcessId">0x2a3c</Data>
+      <Data Name="NewProcessName">C:\Windows\System32\cmd.exe</Data>
+      <!-- %%1937 = TokenElevationTypeFull — process has the full elevated admin token -->
+      <Data Name="TokenElevationType">%%1937</Data>
+      <Data Name="ProcessId">0x1f2c</Data>
+      <Data Name="CommandLine">cmd.exe</Data>
+      <Data Name="ParentProcessName">C:\Windows\System32\runas.exe</Data>
+      <Data Name="TargetUserSid">S-1-0-0</Data>
+      <Data Name="TargetUserName">-</Data>
+      <Data Name="TargetDomainName">-</Data>
+      <Data Name="TargetLogonId">0x0</Data>
+      <!-- S-1-16-12288 = High integrity (elevated) -->
+      <Data Name="MandatoryLabel">S-1-16-12288</Data>
+    </EventData>
+  </Event>
+
+  <!-- ── Event 3 of 3 ─────────────────────────────────────────────────────── -->
+  <!--
+    Event ID 4104 — PowerShell Script Block Logging
+    PowerShell (spawned from the elevated cmd.exe above) executes a reconnaissance
+    script block enumerating local admins and network config.
+    Channel: Microsoft-Windows-PowerShell/Operational (separate RecordID sequence)
+  -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-PowerShell"
+                Guid="{A0C1853B-5C40-4B15-8766-3CF1C58F985A}"/>
+      <EventID>4104</EventID>
+      <Version>1</Version>
+      <Level>5</Level>
+      <Task>2</Task>
+      <Opcode>15</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2024-05-10T15:30:45.9876543Z"/>
+      <RecordID>45678</RecordID>
+      <Correlation ActivityID="{E3F4A5B6-C7D8-9E0F-1A2B-C3D4E5F6A7B8}"/>
+      <Execution ProcessID="10812" ThreadID="10816"/>
+      <Channel>Microsoft-Windows-PowerShell/Operational</Channel>
+      <Computer>WKSTN-JSMITH.corp.example.com</Computer>
+      <Security UserID="S-1-5-21-3623811015-3361044348-30300820-1115"/>
+    </System>
+    <EventData>
+      <Data Name="MessageNumber">1</Data>
+      <Data Name="MessageTotal">1</Data>
+      <Data Name="ScriptBlockText">$localAdmins = net localgroup administrators; $netConfig = ipconfig /all; $shares = net share; Write-Output "=== Local Admins ==="; $localAdmins; Write-Output "=== Network Config ==="; $netConfig; Write-Output "=== Shares ==="; $shares</Data>
+      <Data Name="ScriptBlockId">{F4A5B6C7-D8E9-0F1A-2B3C-D4E5F6A7B8C9}</Data>
+      <Data Name="Path"></Data>
+    </EventData>
+  </Event>
+
+</Events>

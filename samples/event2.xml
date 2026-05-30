@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Event ID 4688 — A new process has been created
+  Scenario: cmd.exe spawns powershell.exe with execution-policy bypass and hidden window.
+            Recorded 1 second after event1.xml in the same logon session.
+  Parent: C:\Windows\System32\cmd.exe (PID 6732)
+  Child:  C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe (PID 15640)
+-->
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+    <Provider Name="Microsoft-Windows-Security-Auditing"
+              Guid="{54849625-5478-4994-A5BA-3E3B0328C30D}"/>
+    <EventID>4688</EventID>
+    <Version>2</Version>
+    <Level>0</Level>
+    <Task>13312</Task>
+    <Opcode>0</Opcode>
+    <Keywords>0x8020000000000000</Keywords>
+    <TimeCreated SystemTime="2024-03-15T14:23:42.1234567Z"/>
+    <RecordID>4829157</RecordID>
+    <Correlation ActivityID="{2D3E4F5A-6B7C-8D9E-0F1A-2B3C4D5E6F7A}"/>
+    <Execution ProcessID="4" ThreadID="3412"/>
+    <Channel>Security</Channel>
+    <Computer>WKSTN-JSMITH.corp.example.com</Computer>
+    <Security/>
+  </System>
+  <EventData>
+    <!-- Subject: same logon session as event1.xml -->
+    <Data Name="SubjectUserSid">S-1-5-21-3623811015-3361044348-30300820-1001</Data>
+    <Data Name="SubjectUserName">jsmith</Data>
+    <Data Name="SubjectDomainName">CORP</Data>
+    <Data Name="SubjectLogonId">0x5b2f0</Data>
+
+    <!-- New process -->
+    <Data Name="NewProcessId">0x3d18</Data>
+    <Data Name="NewProcessName">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</Data>
+    <Data Name="TokenElevationType">%%1936</Data>
+
+    <!-- Parent process -->
+    <Data Name="ProcessId">0x1a4c</Data>
+    <Data Name="CommandLine">"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden</Data>
+    <Data Name="ParentProcessName">C:\Windows\System32\cmd.exe</Data>
+
+    <Data Name="TargetUserSid">S-1-0-0</Data>
+    <Data Name="TargetUserName">-</Data>
+    <Data Name="TargetDomainName">-</Data>
+    <Data Name="TargetLogonId">0x0</Data>
+
+    <!-- Integrity label: S-1-16-8192 = Medium -->
+    <Data Name="MandatoryLabel">S-1-16-8192</Data>
+  </EventData>
+</Event>

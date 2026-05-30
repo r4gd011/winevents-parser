@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+    <Provider Name="Microsoft-Windows-Security-Auditing" Guid="{54849625-5478-4994-A5BA-3E3B0328C30D}"/>
+    <EventID>4688</EventID>
+    <Version>2</Version>
+    <Level>0</Level>
+    <Task>13312</Task>
+    <Opcode>0</Opcode>
+    <Keywords>0x8020000000000000</Keywords>
+    <TimeCreated SystemTime="2024-01-15T10:45:22.7654321Z"/>
+    <RecordID>12345800</RecordID>
+    <Correlation/>
+    <Execution ProcessID="4" ThreadID="180"/>
+    <Channel>Security</Channel>
+    <Computer>WORKSTATION01.corp.example.com</Computer>
+    <Security/>
+  </System>
+  <EventData>
+    <Data Name="SubjectUserSid">S-1-5-21-1234567890-987654321-1122334455-1001</Data>
+    <Data Name="SubjectUserName">jsmith</Data>
+    <Data Name="SubjectDomainName">CORP</Data>
+    <Data Name="SubjectLogonId">0x7b3c9a</Data>
+    <Data Name="NewProcessId">0x1f4c</Data>
+    <Data Name="NewProcessName">C:\Windows\System32\cmd.exe</Data>
+    <Data Name="TokenElevationType">%%1936</Data>
+    <Data Name="ProcessId">0x1234</Data>
+    <Data Name="CommandLine">cmd.exe /c whoami</Data>
+    <Data Name="TargetUserSid">S-1-0-0</Data>
+    <Data Name="TargetUserName">-</Data>
+    <Data Name="TargetDomainName">-</Data>
+    <Data Name="TargetLogonId">0x0</Data>
+    <Data Name="ParentProcessName">C:\Windows\explorer.exe</Data>
+    <Data Name="MandatoryLabel">S-1-16-8192</Data>
+  </EventData>
+</Event>

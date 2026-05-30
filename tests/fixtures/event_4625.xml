@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+    <Provider Name="Microsoft-Windows-Security-Auditing" Guid="{54849625-5478-4994-A5BA-3E3B0328C30D}"/>
+    <EventID>4625</EventID>
+    <Version>0</Version>
+    <Level>0</Level>
+    <Task>12544</Task>
+    <Opcode>0</Opcode>
+    <Keywords>0x8010000000000000</Keywords>
+    <TimeCreated SystemTime="2024-01-15T09:12:33.4567890Z"/>
+    <RecordID>12345699</RecordID>
+    <Correlation/>
+    <Execution ProcessID="4" ThreadID="216"/>
+    <Channel>Security</Channel>
+    <Computer>DC01.corp.example.com</Computer>
+    <Security/>
+  </System>
+  <EventData>
+    <Data Name="SubjectUserSid">S-1-0-0</Data>
+    <Data Name="SubjectUserName">-</Data>
+    <Data Name="SubjectDomainName">-</Data>
+    <Data Name="SubjectLogonId">0x0</Data>
+    <Data Name="TargetUserSid">S-1-0-0</Data>
+    <Data Name="TargetUserName">baduser</Data>
+    <Data Name="TargetDomainName">CORP</Data>
+    <Data Name="Status">0xc000006d</Data>
+    <Data Name="FailureReason">%%2313</Data>
+    <Data Name="SubStatus">0xc0000064</Data>
+    <Data Name="LogonType">3</Data>
+    <Data Name="LogonProcessName">NtLmSsp </Data>
+    <Data Name="AuthenticationPackageName">NTLM</Data>
+    <Data Name="WorkstationName">ATTACKER-PC</Data>
+    <Data Name="TransmittedServices">-</Data>
+    <Data Name="IpAddress">10.0.0.99</Data>
+    <Data Name="IpPort">52341</Data>
+  </EventData>
+</Event>
